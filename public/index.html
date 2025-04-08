@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poetry Feedback Bot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating background elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.2;
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            font-size: 3rem;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 30%;
+            right: 15%;
+            font-size: 2.5rem;
+            animation-duration: 25s;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            font-size: 2rem;
+            animation-duration: 18s;
+            animation-delay: 5s;
+        }
+
+        .floating-element:nth-child(4) {
+            bottom: 40%;
+            right: 25%;
+            font-size: 3.5rem;
+            animation-duration: 22s;
+            animation-delay: 1s;
+        }
+
+        .floating-element:nth-child(5) {
+            top: 50%;
+            left: 50%;
+            font-size: 2.8rem;
+            animation-duration: 30s;
+            animation-delay: 3s;
+        }
+
+        /* Animated background shapes */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: shapeFloat 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: #ff6b6b;
+            top: 10%;
+            left: 10%;
+            animation-duration: 25s;
+        }
+
+        .shape:nth-child(2) {
+            width: 250px;
+            height: 250px;
+            background: #4ecdc4;
+            top: 60%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            background: #ffd166;
+            bottom: 20%;
+            left: 30%;
+            animation-duration: 22s;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(4) {
+            width: 350px;
+            height: 350px;
+            background: #a78bfa;
+            top: 30%;
+            right: 30%;
+            animation-duration: 28s;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(5) {
+            width: 280px;
+            height: 280px;
+            background: #f72585;
+            top: 70%;
+            left: 20%;
+            animation-duration: 35s;
+            animation-delay: 3s;
+        }
+
+        @keyframes shapeFloat {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 30px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 60px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 30px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 30px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 60px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 30px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            border-radius: 3px;
+        }
+
+        .poem-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .poem-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 1rem auto;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .submit-btn:hover::after {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .feedback-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(248, 249, 250, 0.8);
+            display: none;
+            transition: all 0.5s ease;
+        }
+
+        .feedback-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .feedback-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-score {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .score-label {
+            width: 100px;
+            font-weight: 500;
+        }
+
+        .score-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 1rem;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            transition: width 1s ease;
+        }
+
+        .score-value {
+            width: 40px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .poem-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .feedback-category {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-text {
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reactions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: popIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .reaction:hover {
+            transform: scale(1.3);
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            70% {
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .loading {
+            text-align: center;
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        .sentiment-meter {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .sentiment-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71);
+            width: 0;
+            transition: width 1s ease;
+            border-radius: 5px;
+        }
+
+        .sentiment-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+
+        /* Dark theme */
+        body.dark-theme {
+            background: #000000;
+        }
+
+        body.dark-theme .container {
+            background: rgba(30, 30, 30, 0.9);
+        }
+
+        body.dark-theme h1 {
+            color: #ecf0f1;
+        }
+
+        body.dark-theme .poem-input {
+            background: rgba(40, 40, 40, 0.9);
+            color: #ecf0f1;
+            border-color: #34495e;
+        }
+
+        body.dark-theme .feedback-item {
+            background: rgba(40, 40, 40, 0.9);
+            color: #ecf0f1;
+        }
+
+        body.dark-theme .feedback-container {
+            background: rgba(30, 30, 30, 0.8);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .poem-input {
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background shapes -->
+    <div class="animated-bg">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Floating background elements -->
+    <div class="floating-elements">
+        <div class="floating-element">📚</div>
+        <div class="floating-element">✍️</div>
+        <div class="floating-element">📝</div>
+        <div class="floating-element">✨</div>
+        <div class="floating-element">💭</div>
+    </div>
+
+    <!-- Theme toggle button -->
+    <div class="theme-toggle" id="themeToggle">🌙</div>
+
+    <div class="container">
+        <h1 class="animate__animated animate__fadeIn">✨ Poetry Feedback Bot ✨</h1>
+        <textarea class="poem-input" placeholder="Enter your poem here..."></textarea>
+        <button class="submit-btn animate__animated animate__pulse animate__infinite">Get Feedback</button>
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing your poem</div>
+        </div>
+        <div class="feedback-container"></div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            themeToggle.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        });
+
+        // Poem input animation
+        const poemInput = document.querySelector('.poem-input');
+        poemInput.addEventListener('focus', () => {
+            poemInput.classList.add('animate__animated', 'animate__pulse');
+        });
+        
+        poemInput.addEventListener('blur', () => {
+            poemInput.classList.remove('animate__animated', 'animate__pulse');
+        });
+
+        // Submit button animation
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.addEventListener('mouseover', () => {
+            submitBtn.classList.remove('animate__infinite');
+        });
+        
+        submitBtn.addEventListener('mouseout', () => {
+            submitBtn.classList.add('animate__infinite');
+        });
+
+        // Poem analysis
+        document.querySelector('.submit-btn').addEventListener('click', async () => {
+            const poem = document.querySelector('.poem-input').value;
+            if (!poem.trim()) {
+                alert('Please enter a poem first!');
+                return;
+            }
+
+            const loading = document.querySelector('.loading');
+            const feedbackContainer = document.querySelector('.feedback-container');
+            
+            loading.style.display = 'block';
+            feedbackContainer.style.display = 'none';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ poem }),
+                });
+
+                const data = await response.json();
+                if(data.error){
+                    console.log("Error Poem");
+                    feedbackContainer.style.display = 'block';
+                    feedbackContainer.innerHTML = "Thats not a Poem"
+                }
+                else
+                {    // Create poem stats
+                    const poemStats = document.createElement('div');
+                    poemStats.className = 'poem-stats';
+                    poemStats.innerHTML = `
+                        <div class="stat-item">
+                            <div class="stat-value">${data.word_count}</div>
+                            <div class="stat-label">Words</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${data.line_count}</div>
+                            <div class="stat-label">Lines</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${Math.round(data.sentiment_score * 100)}%</div>
+                            <div class="stat-label">Sentiment</div>
+                        </div>
+                    `;
+                    
+                    // Create analysis scores
+                    const analysisScores = document.createElement('div');
+                    analysisScores.className = 'analysis-scores';
+                    analysisScores.innerHTML = `
+                        <div class="analysis-score">
+                            <div class="score-label">Imagery</div>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${data.imagery_score * 100}%"></div>
+                            </div>
+                            <div class="score-value">${Math.round(data.imagery_score * 100)}%</div>
+                        </div>
+                        <div class="analysis-score">
+                            <div class="score-label">Rhythm</div>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${data.rhythm_score * 100}%"></div>
+                            </div>
+                            <div class="score-value">${Math.round(data.rhythm_score * 100)}%</div>
+                        </div>
+                        <div class="analysis-score">
+                            <div class="score-label">Structure</div>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${data.structure_score * 100}%"></div>
+                            </div>
+                            <div class="score-value">${Math.round(data.structure_score * 100)}%</div>
+                        </div>
+                    `;
+                    
+                    // Create feedback items with staggered animation
+                    feedbackContainer.innerHTML = '';
+                    feedbackContainer.appendChild(poemStats);
+                    feedbackContainer.appendChild(analysisScores);
+                    
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = 'feedback-item';
+                    feedbackItem.style.animationDelay = `${0 * 0.2}s`;
+                    
+                    // Extract the reaction emoji from the feedback
+                    
+                    feedbackItem.innerHTML = `
+                        <div class="feedback-text">${data.feedback}</div>
+                    `;
+                    
+                    feedbackContainer.appendChild(feedbackItem);
+
+                    // Add reactions with staggered animation
+                    if (data.reactions.length > 0) {
+                        const reactionsDiv = document.createElement('div');
+                        reactionsDiv.className = 'reactions';
+                        
+                        data.reactions.forEach((reaction, index) => {
+                            const reactionSpan = document.createElement('span');
+                            reactionSpan.className = 'reaction';
+                            reactionSpan.style.animationDelay = `${index * 0.1}s`;
+                            reactionSpan.textContent = reaction;
+                            reactionsDiv.appendChild(reactionSpan);
+                        });
+                        
+                        feedbackContainer.appendChild(reactionsDiv);
+                    }
+
+                    feedbackContainer.style.display = 'block';
+                    
+                    // Add confetti effect for positive sentiment
+                    if (data.sentiment_score > 0.5) {
+                        createConfetti();
+                    }}
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while analyzing your poem. Please try again.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        // Confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'floating-element';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 100}%`;
+                confetti.style.fontSize = `${Math.random() * 2 + 1}rem`;
+                confetti.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                confetti.style.animationDelay = `${Math.random() * 5}s`;
+                confetti.textContent = ['✨', '🌟', '💫', '🎉', '🎊'][Math.floor(Math.random() * 5)];
+                document.querySelector('.floating-elements').appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 15000);
+            }
+        }
+    </script>
+</body>
+</html> 
